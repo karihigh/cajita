@@ -1,6 +1,7 @@
 # Cajita Chicarica
 # NeoTrellis to select colors of NeoPixel strip
 # NeoTrellis connected to Feather M4
+# NeoPixel 136 strip connected to pin D5
 
 import time
 import board
@@ -15,7 +16,7 @@ button_LED.direction = Direction.OUTPUT
 button_LED.value = True
 
 pixel_pin = board.D5
-num_pixels = 136
+num_pixels = 34
 
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels, auto_write=False)
 
@@ -40,23 +41,8 @@ WHITE = (255, 255, 255)
 
 ORDER = neopixel.GRB
 
-'''
-COLORS = [  # pixel colors
-    OFF, RED, GREEN, BLUE,
-    WHITE_WARM, PINK, CYAN, ORANGE,
-    LIGHT_BLUE, YELLOW, ROUGE, WHITE_COOL,
-    WHITE, YELLOW_GREEN, PURPLE, OFF
-]
-'''
-
 pixels.fill(DM_RED)  # turn on the strip
 pixels.show()
-
-
-def dimmed_colors(color_values):
-    (red_value, green_value, blue_value) = color_values
-    return (red_value // 10, green_value // 10, blue_value // 10)
-
 
 # this will be called when button events are received
 def blink(event):
@@ -64,81 +50,65 @@ def blink(event):
     # do the chase for the NeoPixel strip
 
     if event.number == 0:
-        # este print me aparece dos veces en la consola cuando apreto un botón
         print("zero")
-        trellis.pixels[event.number] = dimmed_colors(DM_RED)
-        for chase_on in range(num_pixels):
-            pixels[chase_on] = DM_RED
-            pixels.show()
-            time.sleep(0.05)
-        trellis.pixels[event.number] = DM_RED
+        pixels.fill(BLUE)
+        pixels.show()
+
     elif event.number == 1:
         print("one")
-        trellis.pixels[event.number] = dimmed_colors(YELLOW)
-        for chase_on in range(num_pixels):
-            pixels[chase_on] = YELLOW
-            pixels.show()
-            time.sleep(0.05)
-        trellis.pixels[event.number] = YELLOW
+        pixels.fill = BLUE
+        pixels.show()
+
     elif event.number == 2:
         print("two")
-        trellis.pixels[event.number] = dimmed_colors(PINK)
-        for chase_on in range(num_pixels):
-            pixels[chase_on] = PINK
-            pixels.show()
-            time.sleep(0.05)
-        trellis.pixels[event.number] = PINK
+        pixels.fill = BLUE
+        pixels.show()
+
     elif event.number == 3:
         print("three")
-        trellis.pixels[event.number] = dimmed_colors(GREEN)
-        for chase_on in range(num_pixels):
-            pixels[chase_on] = GREEN
-            pixels.show()
+        for i in range(num_pixels):
+            pixels[i] = GREEN
             time.sleep(0.05)
-        trellis.pixels[event.number] = GREEN
+            pixels[i] = WHITE
+            time.sleep(0.05)
+
     elif event.number == 4:
         print("four")
-        trellis.pixels[event.number] = dimmed_colors(BLUE)
         for chase_on in range(num_pixels):
             pixels[chase_on] = BLUE
             pixels.show()
             time.sleep(0.05)
-        trellis.pixels[event.number] = BLUE
+
     elif event.number == 5:
         print("five")
-        trellis.pixels[event.number] = dimmed_colors(CYAN)
         for chase_on in range(num_pixels):
             pixels[chase_on] = CYAN
             pixels.show()
             time.sleep(0.05)
-        trellis.pixels[event.number] = CYAN
+
     elif event.number == 6:
         print("six")
-        trellis.pixels[event.number] = dimmed_colors(RED)
         for chase_on in range(num_pixels):
             pixels[chase_on] = RED
             pixels.show()
             time.sleep(0.05)
-        trellis.pixels[event.number] = RED
+
     elif event.number == 7:
         print("six")
-        trellis.pixels[event.number] = dimmed_colors(WHITE)
         for chase_on in range(num_pixels):
             pixels[chase_on] = WHITE
             pixels.show()
             time.sleep(0.05)
-        trellis.pixels[event.number] = WHITE
+
     elif event.number == 8:
         print("seven")
-        trellis.pixels[event.number] = dimmed_colors(PURPLE)
         for chase_on in range(num_pixels):
             pixels[chase_on] = PURPLE
             pixels.show()
             time.sleep(0.05)
-        trellis.pixels[event.number] = PURPLE
+
     elif event.number == 9:
         print("nine")
-        trellis.pixels[event.number] = dimmed_colors(PURPLE)
         for strobe in range(num_pixels):
             pixels[strobe] = PURPLE
             pixels.show()
@@ -146,7 +116,7 @@ def blink(event):
             pixels[strobe] = OFF
             pixels.show()
             time.sleep(0.05)
-        trellis.pixels[event.number] = PURPLE
+
     elif event.number == 10:
         print("ten")
     elif event.number == 11:
@@ -186,39 +156,15 @@ def blink(event):
                 pixels.show()
                 time.sleep(wait)
 
-        while True:
-            rainbow_cycle(0.01)    # rainbow cycle with 1ms delay per step
-
     elif event.number == 15:
         print("fifteen")
-        trellis.pixels[event.number] = dimmed_colors(OFF)
         for chase_on in range(num_pixels):
             pixels[chase_on] = OFF
             pixels.show()
             time.sleep(0.05)
-        trellis.pixels[event.number] = OFF
-
-'''
-    if event.edge == NeoTrellis.EDGE_RISING:
-        trellis.pixels[event.number] = dimmed_colors(COLORS[event.number])
-        for chase_off in range(num_pixels):  # chase LEDs off
-            pixels[chase_off] = (OFF)
-            pixels.show()
-            time.sleep(0.005)
-
-        for chase_on in range(num_pixels):  # chase LEDs on
-            pixels[chase_on] = (COLORS[event.number])
-            pixels.show()
-            time.sleep(0.005)
-
-    # turn the trellis LED back to full color when a rising edge is detected
-    elif event.edge == NeoTrellis.EDGE_FALLING:
-        trellis.pixels[event.number] = COLORS[event.number]
-
-'''
 
 # boot up animation on trellis
-trellis.pixels.brightness = 0.8
+trellis.pixels.brightness = 0.2
 for i in range(16):
     # activate rising edge events on all keys
     trellis.activate_key(i, NeoTrellis.EDGE_RISING)
@@ -228,21 +174,24 @@ for i in range(16):
     trellis.callbacks[i] = blink
 
     # light the trellis LEDs on startup
-    trellis.pixels[0] = DM_RED
-    trellis.pixels[1] = YELLOW
-    trellis.pixels[2] = PINK
-    trellis.pixels[3] = GREEN
-    trellis.pixels[4] = BLUE
-    trellis.pixels[5] = CYAN
-    trellis.pixels[6] = RED
-    trellis.pixels[7] = WHITE
-    trellis.pixels[8] = PURPLE
-    trellis.pixels[9] = OFF
-    trellis.pixels[10] = OFF
-    trellis.pixels[11] = OFF
-    trellis.pixels[12] = OFF
-    trellis.pixels[13] = OFF
-    trellis.pixels[14] = OFF
+    trellis.pixels[0] = BLUE
+    trellis.pixels[1] = BLUE
+    trellis.pixels[2] = BLUE
+    trellis.pixels[3] = WHITE
+
+    trellis.pixels[4] = PINK
+    trellis.pixels[5] = PINK
+    trellis.pixels[6] = PINK
+    trellis.pixels[7] = PINK
+
+    trellis.pixels[8] = GREEN
+    trellis.pixels[9] = GREEN
+    trellis.pixels[10] = PURPLE
+    trellis.pixels[11] = PURPLE
+
+    trellis.pixels[12] = RED
+    trellis.pixels[13] = CYAN
+    trellis.pixels[14] = YELLOW
     trellis.pixels[15] = OFF
     time.sleep(.05)
 
