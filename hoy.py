@@ -17,7 +17,7 @@ button_LED.direction = Direction.OUTPUT
 button_LED.value = True
 
 pixel_pin = board.D5
-num_pixels = 136
+num_pixels = 5
 
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels, auto_write=False)
 print(pixels)
@@ -52,13 +52,37 @@ def blink(event):
     
     if event.number == 0:
         print("zero")
-        for chase_on in range(num_pixels):
-            pixels[chase_on] = RED
-            pixels.show()
-            time.sleep(0.05)
-            pixels[chase_on] = BLUE
-            pixels.show()
-            time.sleep(0.05)
+        def wheel(pos):
+            # Input a value 0 to 255 to get a color value.
+            # The colours are a transition r - g - b - back to r.
+            if pos < 0 or pos > 255:
+                r = g = b = 0
+            elif pos < 85:
+                r = int(pos * 3)
+                g = int(255 - pos*3)
+                b = 0
+            elif pos < 170:
+                pos -= 85
+                r = int(255 - pos*3)
+                g = 0
+                b = int(pos*3)
+            else:
+                pos -= 170
+                r = 0
+                g = int(pos*3)
+                b = int(255 - pos*3)
+            return (r, g, b) if ORDER == neopixel.RGB or ORDER == neopixel.GRB else (r, g, b, 0)
+
+        def rainbow_cycle(wait):
+            for j in range(255):
+                for i in range(num_pixels):
+                    pixel_index = (i * 256 // num_pixels) + j
+                    pixels[i] = wheel(pixel_index & 255)
+                pixels.show()
+                time.sleep(wait)
+
+        while True:
+            rainbow_cycle(0.001)    # rainbow cycle with 1ms delay per step
 
     elif event.number == 1:
         print("one")
@@ -129,10 +153,6 @@ def blink(event):
     # se queda para siempre en el loop y no escucha si apreto otro
     elif event.number == 14:
         print("fourteen")
-        for chase_off in range(num_pixels): 
-            pixels[chase_off] = (RED)
-            pixels.show()
-            time.sleep(0.005)
 
     elif event.number == 15:
         pixels.fill(OFF)
